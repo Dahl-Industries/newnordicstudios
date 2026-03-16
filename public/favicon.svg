@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    @font-face {
+      font-family: "TRJN DaVinci";
+      src: url('/fonts/TRJNDaVinci-Display.woff') format('woff');
+    }
+    text { font-family: "TRJN DaVinci", serif; font-size: 54px; fill: #30223d; }
+  </style>
+  <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle">N</text>
+</svg>
