@@ -6,7 +6,7 @@
     "New Nordic Studios is a collaboration based social media agency founded by Margret-Louise Allen.";
   const CTA_URL = "https://meetings-eu1.hubspot.com/margret-louise";
   const CONTACT_BLURB =
-    "Eager to explore a collaboration? We look forward to the opportunity to connect.<br><br>contact@newnordicstudios.com<br>+46 72 322 2185";
+    "Eager to explore a collaboration?<br><br>contact@newnordicstudios.com<br>+46 72 322 2185";
   const STORY_PARAGRAPHS = [
     "In today’s digital-first world, a brand’s online presence is more than just a marketing tool—it’s a direct reflection of its identity, credibility, and influence.",
     "New Nordic Studios is a full-service social media agency specializing in content creation, brand storytelling, and digital strategy.",
@@ -54,12 +54,19 @@
       ["meta[property='og:description']", HERO_COPY],
       ["meta[name='twitter:description']", HERO_COPY],
       ["meta[property='og:site_name']", BRAND],
+      ["meta[name='twitter:card']", "summary"],
     ];
 
     sets.forEach(([selector, content]) => {
       const node = document.querySelector(selector);
       if (node) node.setAttribute("content", content);
     });
+
+    document
+      .querySelectorAll(
+        "meta[property='og:image'],meta[name='twitter:image'],meta[name='twitter:image:src']",
+      )
+      .forEach((node) => node.remove());
 
     const ensureLink = (rel, href, type = "") => {
       let node = type
@@ -97,7 +104,8 @@
     if (document.getElementById("nns-cleanup-style")) return;
     const style = document.createElement("style");
     style.id = "nns-cleanup-style";
-    style.textContent = ".intro__illu,.intro__illu>div,.intro__illu canvas,.home-projects .home-projects__row:nth-of-type(2){display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}";
+    style.textContent =
+      ".intro__illu,.intro__illu>div,.intro__illu canvas,.home-projects .home-projects__row:nth-of-type(2){display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){.intro__title{font-size:clamp(3.75rem,16.5vw,5.5rem)!important;line-height:1.02!important;}.intro__title>span{flex:0 0 auto!important;}.intro__title>span:first-child{white-space:nowrap!important;}.intro__club{transform:none!important;}}";
     document.head.appendChild(style);
   };
 

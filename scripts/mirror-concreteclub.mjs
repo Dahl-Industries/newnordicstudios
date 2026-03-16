@@ -8,6 +8,8 @@ const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
 const REBRAND_SCRIPT_PATH = path.join(OUTPUT_DIR, "rebrand-newnordic.js");
 const REBRAND_SCRIPT_SRC = "/rebrand-newnordic.js";
+const BRAND_FAVICON_URL = "/favicon.ico?v=1";
+const BRAND_OG_IMAGE_URL = "/favicon-n.png?v=1";
 const TEXT_FILE_EXTENSIONS = new Set([".mjs", ".js", ".css", ".html", ".json", ".svg"]);
 
 const queue = [START_URL.href];
@@ -179,7 +181,30 @@ const applyRebrandToHtml = async (filePath) => {
     .replaceAll("content=\"@antinomystudio\"", "content=\"@newnordicstudios\"")
     .replaceAll(
       "https://www.datocms-assets.com/77158/1665153025-favicon.png",
-      "/favicon.ico?v=1",
+      BRAND_FAVICON_URL,
+    )
+    .replaceAll(
+      "https://www.datocms-assets.com/77158/1693398607-og-image.png",
+      BRAND_OG_IMAGE_URL,
+    );
+
+  html = html
+    .replace(
+      /<meta[^>]+(?:property="og:image"|name="twitter:image(?::src)?")[^>]*>/gi,
+      "",
+    )
+    .replace(
+      /<meta\s+hid="twitter:card"\s+name="twitter:card"[^>]*>/gi,
+      '<meta hid="twitter:card" name="twitter:card" content="summary">',
+    )
+    .replaceAll('b.twitterCard="summary_large_image";', 'b.twitterCard="summary";')
+    .replaceAll(
+      'b.image={url:"https:\\u002F\\u002Fwww.datocms-assets.com\\u002F77158\\u002F1693398607-og-image.png"};',
+      `b.image={url:"${BRAND_OG_IMAGE_URL}"};`,
+    )
+    .replaceAll(
+      'favicon:{url:"https:\\u002F\\u002Fwww.datocms-assets.com\\u002F77158\\u002F1665153025-favicon.png"}',
+      `favicon:{url:"${BRAND_FAVICON_URL}"}`,
     );
 
   const faviconLinks =
@@ -192,7 +217,7 @@ const applyRebrandToHtml = async (filePath) => {
   }
 
   const staticCleanupStyle =
-    '<style id="nns-static-cleanup">.home-projects .home-projects__row:nth-of-type(2){display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}</style>';
+    '<style id="nns-static-cleanup">.home-projects .home-projects__row:nth-of-type(2){display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){.intro__title{font-size:clamp(3.75rem,16.5vw,5.5rem)!important;line-height:1.02!important;}.intro__title>span{flex:0 0 auto!important;}.intro__title>span:first-child{white-space:nowrap!important;}.intro__club{transform:none!important;}}</style>';
 
   if (!html.includes('id="nns-static-cleanup"')) {
     html = html.replace("</head>", `  ${staticCleanupStyle}\n</head>`);
@@ -252,7 +277,8 @@ const STATIC_REPLACEMENTS = [
     "https://images.squarespace-cdn.com/content/v1/67c8dcdef69fa27c95a46082/bfe61038-8892-4762-b617-f14a052a572c/favicon.ico?format=100w",
     "/favicon.ico?v=1",
   ],
-  ["https://www.datocms-assets.com/77158/1665153025-favicon.png", "/favicon.ico?v=1"],
+  ["https://www.datocms-assets.com/77158/1665153025-favicon.png", BRAND_FAVICON_URL],
+  ["https://www.datocms-assets.com/77158/1693398607-og-image.png", BRAND_OG_IMAGE_URL],
   ["© All rights reserved — Concrete Club Studio, 2022", "© All rights reserved — New Nordic Studios, 2026"],
   ["New Nordic Club", "New Nordic Studios"],
   ["Selected projects", "In Motion"],
@@ -343,7 +369,7 @@ const rebrandRuntimeScript = `
     "New Nordic Studios is a collaboration based social media agency founded by Margret-Louise Allen.";
   const CTA_URL = "https://meetings-eu1.hubspot.com/margret-louise";
   const CONTACT_BLURB =
-    "Eager to explore a collaboration? We look forward to the opportunity to connect.<br><br>contact@newnordicstudios.com<br>+46 72 322 2185";
+    "Eager to explore a collaboration?<br><br>contact@newnordicstudios.com<br>+46 72 322 2185";
   const STORY_PARAGRAPHS = [
     "In today’s digital-first world, a brand’s online presence is more than just a marketing tool—it’s a direct reflection of its identity, credibility, and influence.",
     "New Nordic Studios is a full-service social media agency specializing in content creation, brand storytelling, and digital strategy.",
@@ -391,12 +417,19 @@ const rebrandRuntimeScript = `
       ["meta[property='og:description']", HERO_COPY],
       ["meta[name='twitter:description']", HERO_COPY],
       ["meta[property='og:site_name']", BRAND],
+      ["meta[name='twitter:card']", "summary"],
     ];
 
     sets.forEach(([selector, content]) => {
       const node = document.querySelector(selector);
       if (node) node.setAttribute("content", content);
     });
+
+    document
+      .querySelectorAll(
+        "meta[property='og:image'],meta[name='twitter:image'],meta[name='twitter:image:src']",
+      )
+      .forEach((node) => node.remove());
 
     const ensureLink = (rel, href, type = "") => {
       let node = type
