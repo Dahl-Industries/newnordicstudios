@@ -117,11 +117,10 @@
     const path = rawPath.endsWith("/") && rawPath !== "/" ? rawPath.slice(0, -1) : rawPath;
     if (path !== "/") return;
 
-    const backgroundNodes = document.querySelectorAll(".intro, .intro__wrapper, .header");
+    const backgroundNodes = document.querySelectorAll(".intro, .intro__wrapper");
     backgroundNodes.forEach((node) => {
       node.style.setProperty("background", HERO_BACKGROUND, "important");
       node.style.setProperty("background-color", HERO_BACKGROUND, "important");
-      node.style.setProperty("background-image", "none", "important");
       node.style.setProperty("color", HERO_TEXT, "important");
     });
 
