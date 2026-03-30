@@ -1,9 +1,9 @@
 (() => {
   const BRAND = "New Nordic Studios";
   const HERO_COPY =
-    "Helping businesses grow through strategic and engaging social media.";
+    "New Nordic Studios is a full stack creative consultancy firm.";
   const BRAND_BLURB =
-    "New Nordic Studios is a collaboration based social media agency founded by Margret-Louise Allen.";
+    "New Nordic Studios is a full stack creative consultancy firm.";
   const CTA_URL = "https://meetings-eu1.hubspot.com/margret-louise";
   const CONTACT_BLURB =
     "Eager to explore a collaboration?<br><br>contact@newnordicstudios.com<br>+46 72 322 2185";
@@ -38,6 +38,7 @@
     [/\bThe New Nordic Studios\b/gi, "New Nordic Studios"],
     [/The New Nordic is a collaboration based creative freelance collective founded by Margret-Louise Allen\.?/gi, BRAND_BLURB],
     [/The New Nordic Studios is a collaboration based social media agency founded by Margret-Louise Allen\.?/gi, BRAND_BLURB],
+    [/New Nordic Studios is a collaboration based social media agency founded by Margret-Louise Allen\.?/gi, BRAND_BLURB],
     [/New Nordic Studios is a collaboration based creative freelance collective founded by Margret-Louise Allen\.?/gi, BRAND_BLURB],
     [/\bselected projects\b/gi, "In Motion"],
     [/\bselected clients\b/gi, "In Motion"],
