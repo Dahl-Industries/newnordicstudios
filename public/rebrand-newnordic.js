@@ -150,15 +150,15 @@
       }
 
       .home-story__sticky .grid .home-story__text[data-nns-story-block]:first-of-type {
-        grid-area: 4 / 3 / auto / span 4;
+        grid-area: 4 / 4 / auto / span 4;
       }
 
       .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(2) {
-        grid-area: 8 / 7 / auto / span 4;
+        grid-area: 8 / 8 / auto / span 4;
       }
 
       .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(3) {
-        grid-area: 14 / 3 / auto / span 4;
+        grid-area: 14 / 4 / auto / span 4;
         max-width: min(31rem, 100%);
       }
 
