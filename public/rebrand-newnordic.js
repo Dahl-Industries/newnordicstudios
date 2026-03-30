@@ -129,7 +129,7 @@
     const style = document.createElement("style");
     style.id = "nns-cleanup-style";
     style.textContent =
-      ".intro__illu,.intro__illu>div,.intro__illu canvas,.home-projects .home-projects__row:nth-of-type(2){display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){body{overflow-x:hidden!important;}.overlay{display:none!important;}.header{padding:.75rem!important;}.header__content:nth-of-type(2){display:none!important;}.header__wrap{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:.35rem!important;}.header__text{display:none!important;}.header__right{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:.25rem!important;}.header__location,.header__nav,.header__link{font-size:.66rem!important;line-height:.92!important;white-space:nowrap!important;}.header__nav{display:flex!important;gap:.2rem!important;}.intro__wrapper{min-height:100svh!important;}.intro__title{bottom:1rem!important;font-size:clamp(3.45rem,18vw,4.8rem)!important;left:.75rem!important;letter-spacing:-.04em!important;line-height:.88!important;max-width:calc(100vw - 1.5rem)!important;right:.75rem!important;top:auto!important;}.intro__title>span{flex:0 0 auto!important;max-width:100%!important;}.intro__title>span:first-child{white-space:normal!important;}.intro__club{margin-top:.25rem!important;transform:none!important;}}";
+      ".intro__illu,.intro__illu>div,.intro__illu canvas,.home-projects .home-projects__row:nth-of-type(2){display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){body{overflow-x:hidden!important;}.page--index[data-v-2d54c737]{padding-bottom:0!important;}.overlay{display:none!important;}.header{padding:.75rem!important;}.header__content:nth-of-type(2){display:none!important;}.header__wrap{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:.35rem!important;}.header__text{display:none!important;}.header__right{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:.25rem!important;}.header__location,.header__nav,.header__link{font-size:.66rem!important;line-height:.92!important;white-space:nowrap!important;}.header__nav{display:flex!important;gap:.2rem!important;}.header__nav::after,.header__wrap::after,.header__right::after{content:none!important;display:none!important;}.intro{-webkit-clip-path:none!important;clip-path:none!important;height:auto!important;min-height:82svh!important;pointer-events:auto!important;position:relative!important;top:auto!important;}.intro__wrapper{align-items:flex-end!important;display:flex!important;height:auto!important;justify-content:flex-start!important;min-height:82svh!important;padding:5.5rem .75rem 1.5rem!important;position:relative!important;top:auto!important;transform:none!important;}.intro__grid{display:none!important;}.intro__title{bottom:auto!important;font-family:'TRJN DaVinci'!important;font-size:clamp(3.1rem,15.5vw,4.5rem)!important;left:auto!important;letter-spacing:-.04em!important;line-height:.88!important;margin:0!important;max-width:100%!important;position:relative!important;right:auto!important;top:auto!important;width:100%!important;}.intro__title>span{flex:0 0 auto!important;max-width:100%!important;}.intro__title>span:first-child{white-space:normal!important;}.intro__club{margin-top:.15rem!important;transform:none!important;}}";
     document.head.appendChild(style);
   };
 
@@ -189,6 +189,10 @@
         font-weight: 700;
       }
 
+      .nns-story-block__body {
+        display: inline;
+      }
+
       @media (max-width: 63.99rem) {
         .home-story {
           height: auto !important;
@@ -210,15 +214,28 @@
           display: flex !important;
           flex-direction: column !important;
           gap: 2.5rem !important;
+          height: auto !important;
+          left: auto !important;
+          position: relative !important;
           padding: 0 !important;
+          top: auto !important;
+          width: 100% !important;
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block] {
-          font-size: 0.78rem !important;
-          line-height: 0.96rem !important;
-          max-width: none !important;
+          font-size: 0.68rem !important;
+          line-height: 0.86rem !important;
+          max-width: calc(100vw - 1.5rem) !important;
+          overflow-wrap: anywhere !important;
+          padding-right: 0.5rem !important;
           width: 100% !important;
-          padding: 0 !important;
+          word-break: break-word !important;
+        }
+
+        .nns-story-block,
+        .nns-story-block__list,
+        .nns-story-block__item {
+          width: 100% !important;
         }
 
         .nns-story-block__title {
@@ -227,6 +244,19 @@
 
         .nns-story-block__item + .nns-story-block__item {
           margin-top: 0.85rem !important;
+        }
+
+        .nns-story-block__item {
+          overflow-wrap: anywhere !important;
+          word-break: break-word !important;
+        }
+
+        .nns-story-block__label {
+          display: block !important;
+        }
+
+        .nns-story-block__body {
+          display: block !important;
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block]:first-of-type,
@@ -244,7 +274,7 @@
       .map((item) => {
         const [label, ...rest] = item.split(": ");
         const body = rest.join(": ");
-        return `<li class="nns-story-block__item"><span class="nns-story-block__label">${label}:</span> ${body}</li>`;
+        return `<li class="nns-story-block__item"><span class="nns-story-block__label">${label}:</span><span class="nns-story-block__body"> ${body}</span></li>`;
       })
       .join("");
 
@@ -521,19 +551,20 @@
     // Ensure top-right nav reads exactly: "Studio, Contact"
     const navs = Array.from(document.querySelectorAll(".header__nav"));
     navs.forEach((nav) => {
-      const navLinks = Array.from(nav.querySelectorAll(".header__link"));
-      if (navLinks[0]) {
-        navLinks[0].textContent = "Studio,";
-        navLinks[0].setAttribute("href", "/");
-        navLinks[0].removeAttribute("target");
-        navLinks[0].removeAttribute("rel");
-      }
-      if (navLinks[1]) {
-        navLinks[1].textContent = "Contact";
-        navLinks[1].setAttribute("href", "/contact");
-        navLinks[1].removeAttribute("target");
-        navLinks[1].removeAttribute("rel");
-      }
+      nav.innerHTML = "";
+
+      const studioLink = document.createElement("a");
+      studioLink.className = "header__link";
+      studioLink.textContent = "Studio,";
+      studioLink.setAttribute("href", "/");
+
+      const contactLink = document.createElement("a");
+      contactLink.className = "header__link";
+      contactLink.textContent = "Contact";
+      contactLink.setAttribute("href", "/contact");
+
+      nav.appendChild(studioLink);
+      nav.appendChild(contactLink);
     });
 
     // Replace contact-page left blurb with provided copy.
