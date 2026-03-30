@@ -217,7 +217,7 @@ const applyRebrandToHtml = async (filePath) => {
   }
 
   const staticCleanupStyle =
-    '<style id="nns-static-cleanup">.home-projects .home-projects__row:nth-of-type(2){display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){.intro__title{font-size:clamp(3.75rem,16.5vw,5.5rem)!important;line-height:1.02!important;}.intro__title>span{flex:0 0 auto!important;}.intro__title>span:first-child{white-space:nowrap!important;}.intro__club{transform:none!important;}}</style>';
+    '<style id="nns-static-cleanup">.intro,.intro__wrapper{background:#d6ccc4!important;background-color:#d6ccc4!important;color:#372d26!important;}.intro *,.header,.header *,#overlay__intro,#overlay__intro *{color:#372d26!important;}.home-projects .home-projects__row:nth-of-type(2){display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){.intro__title{font-size:clamp(3.75rem,16.5vw,5.5rem)!important;line-height:1.02!important;}.intro__title>span{flex:0 0 auto!important;}.intro__title>span:first-child{white-space:nowrap!important;}.intro__club{transform:none!important;}}</style>';
 
   if (!html.includes('id="nns-static-cleanup"')) {
     html = html.replace("</head>", `  ${staticCleanupStyle}\n</head>`);
@@ -367,6 +367,8 @@ const applyRebrandToMirroredAssets = async () => {
 const rebrandRuntimeScript = `
 (() => {
   const BRAND = "New Nordic Studios";
+  const HERO_BACKGROUND = "#d6ccc4";
+  const HERO_TEXT = "#372d26";
   const HERO_COPY =
     "New Nordic Studios is a full stack creative consultancy firm.";
   const BRAND_BLURB =
@@ -474,6 +476,26 @@ const rebrandRuntimeScript = `
     style.id = "nns-cleanup-style";
     style.textContent = ".intro__illu,.intro__illu>div,.intro__illu canvas,.home-projects .home-projects__row:nth-of-type(2){display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}";
     document.head.appendChild(style);
+  };
+
+  const forceHeroPalette = () => {
+    const rawPath = window.location.pathname || "/";
+    const path = rawPath.endsWith("/") && rawPath !== "/" ? rawPath.slice(0, -1) : rawPath;
+    if (path !== "/") return;
+
+    const backgroundNodes = document.querySelectorAll(".intro, .intro__wrapper");
+    backgroundNodes.forEach((node) => {
+      node.style.setProperty("background", HERO_BACKGROUND, "important");
+      node.style.setProperty("background-color", HERO_BACKGROUND, "important");
+      node.style.setProperty("color", HERO_TEXT, "important");
+    });
+
+    const textNodes = document.querySelectorAll(
+      ".intro, .intro *, .header, .header *, #overlay__intro, #overlay__intro *",
+    );
+    textNodes.forEach((node) => {
+      node.style.setProperty("color", HERO_TEXT, "important");
+    });
   };
 
   const forceClientCardImages = () => {
@@ -877,6 +899,7 @@ const rebrandRuntimeScript = `
   const applyAll = (root = document.body) => {
     forceMeta();
     applyVisualCleanup();
+    forceHeroPalette();
     if (root) applyText(root);
     keepOnlyFirstProjectsPage();
     makeClientCardsStatic();
@@ -907,6 +930,7 @@ const rebrandRuntimeScript = `
       forceStoryParagraphs();
       normalizeRules();
       forceFixedLabels();
+      forceHeroPalette();
     }, 400);
   };
 
