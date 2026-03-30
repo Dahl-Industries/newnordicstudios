@@ -9,29 +9,31 @@
   const CTA_URL = "https://meetings-eu1.hubspot.com/margret-louise";
   const CONTACT_BLURB =
     "Eager to explore a collaboration?<br><br>contact@newnordicstudios.com<br>+46 72 322 2185";
-  const STORY_PARAGRAPHS = [
-    "A multi-disciplinary creative studio bridging the gap between high-level heritage strategy and the fast-paced digital landscape. From brand guardianship to performance-led content, we build visual ecosystems that endure.",
-    "We don't just design; we build the systems, stories, and performance-led UGC streams that define modern market leaders. From seasonal storytelling arcs to high-retention video assets, we bridge the gap between aesthetic excellence and measurable revenue.",
-    `Pillar I: Brand Architecture & Narrative
-Brand Guardianship: Defining the tone of voice and ensuring aesthetic consistency across every consumer touchpoint: from retail environments to digital media.
-
-Narrative Frameworks: Developing seasonal storytelling arcs and messaging pillars that resonate emotionally with target consumers.
-
-Innovation Strategy: Utilizing competitive research and trend analysis to guide long-term investment and business transformation.
-
-Pillar II: Performance Creative & UGC
-Platform-Native Content: Creating, testing, and scaling high-retention short-form video (UGC) for Meta, TikTok, and Pinterest.
-
-Retention Strategy: Analyzing performance signals: CTR, hooks, and CPA, to iterate and improve output based on real-time data.
-
-360 Integrated Campaigns: Leading the execution of product launches and hero campaigns from initial insight to a global creative toolkit.
-
-Pillar III: Commercial Operations & Design
-Tactile Design: Premium physical branding, from bespoke menu and packaging and label design and editorial layouts to sourcing sustainable branding materials.
-
-DTC Infrastructure: Building the operational backbone: connecting domains, customizing POS systems, and architecting e-commerce layouts.
-
-Commercialization: Managing the "ground-up" logistics: calculating landing costs, profit margins, and vendor relations to build sustainable revenue channels.`,
+  const STORY_BLOCKS = [
+    {
+      title: "Pillar I: Brand Architecture & Narrative",
+      items: [
+        "Brand Guardianship: Defining the tone of voice and ensuring aesthetic consistency across every consumer touchpoint: from retail environments to digital media.",
+        "Narrative Frameworks: Developing seasonal storytelling arcs and messaging pillars that resonate emotionally with target consumers.",
+        "Innovation Strategy: Utilizing competitive research and trend analysis to guide long-term investment and business transformation.",
+      ],
+    },
+    {
+      title: "Pillar II: Performance Creative & UGC",
+      items: [
+        "Platform-Native Content: Creating, testing, and scaling high-retention short-form video (UGC) for Meta, TikTok, and Pinterest.",
+        "Retention Strategy: Analyzing performance signals: CTR, hooks, and CPA, to iterate and improve output based on real-time data.",
+        "360 Integrated Campaigns: Leading the execution of product launches and hero campaigns from initial insight to a global creative toolkit.",
+      ],
+    },
+    {
+      title: "Pillar III: Commercial Operations & Design",
+      items: [
+        "Tactile Design: Premium physical branding, from bespoke menu and packaging and label design and editorial layouts to sourcing sustainable branding materials.",
+        "DTC Infrastructure: Building the operational backbone: connecting domains, customizing POS systems, and architecting e-commerce layouts.",
+        'Commercialization: Managing the "ground-up" logistics: calculating landing costs, profit margins, and vendor relations to build sustainable revenue channels.',
+      ],
+    },
   ];
   const CLIENT_CARD_BASE_NAMES = ["01", "02", "03", "04", "05", "06", "07", "08"];
   const CLIENT_CARD_EXTENSIONS = [
@@ -129,6 +131,110 @@ Commercialization: Managing the "ground-up" logistics: calculating landing costs
     style.textContent =
       ".intro__illu,.intro__illu>div,.intro__illu canvas,.home-projects .home-projects__row:nth-of-type(2){display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){.intro__title{font-size:clamp(3.75rem,16.5vw,5.5rem)!important;line-height:1.02!important;}.intro__title>span{flex:0 0 auto!important;}.intro__title>span:first-child{white-space:nowrap!important;}.intro__club{transform:none!important;}}";
     document.head.appendChild(style);
+  };
+
+  const applyStoryLayoutStyles = () => {
+    if (document.getElementById("nns-story-pillars-style")) return;
+    const style = document.createElement("style");
+    style.id = "nns-story-pillars-style";
+    style.textContent = `
+      .overlay .overlay__step:nth-of-type(2) {
+        display: none !important;
+      }
+
+      .home-story__sticky .grid .home-story__text[data-nns-story-block] {
+        align-items: flex-start !important;
+        display: block !important;
+        max-width: min(29rem, 100%);
+        padding: 0 !important;
+      }
+
+      .home-story__sticky .grid .home-story__text[data-nns-story-block]:first-of-type {
+        grid-area: 3 / 1 / auto / span 4;
+      }
+
+      .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(2) {
+        grid-area: 7 / 6 / auto / span 4;
+      }
+
+      .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(3) {
+        grid-area: 13 / 1 / auto / span 5;
+        max-width: min(31rem, 100%);
+      }
+
+      .nns-story-block {
+        width: 100%;
+      }
+
+      .nns-story-block__title {
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      .nns-story-block__list {
+        list-style: disc;
+        margin: 0;
+        padding-left: 1rem;
+      }
+
+      .nns-story-block__item + .nns-story-block__item {
+        margin-top: 1.1rem;
+      }
+
+      .nns-story-block__item::marker {
+        font-size: 0.7em;
+      }
+
+      .nns-story-block__label {
+        font-weight: 700;
+      }
+
+      @media (max-width: 63.99rem) {
+        .home-story {
+          height: auto !important;
+          margin-top: 0 !important;
+          opacity: 1 !important;
+        }
+
+        .home-story__sticky {
+          height: auto !important;
+          padding: 7rem 1rem 5rem !important;
+          position: relative !important;
+        }
+
+        .home-story__sticky .grid {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 3rem !important;
+          padding: 0 !important;
+        }
+
+        .home-story__sticky .grid .home-story__text[data-nns-story-block] {
+          max-width: none !important;
+          width: 100% !important;
+          padding: 0 !important;
+        }
+
+        .home-story__sticky .grid .home-story__text[data-nns-story-block]:first-of-type,
+        .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(2),
+        .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(3) {
+          grid-area: auto !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  };
+
+  const renderStoryBlock = (block) => {
+    const items = block.items
+      .map((item) => {
+        const [label, ...rest] = item.split(": ");
+        const body = rest.join(": ");
+        return `<li class="nns-story-block__item"><span class="nns-story-block__label">${label}:</span> ${body}</li>`;
+      })
+      .join("");
+
+    return `<div class="nns-story-block"><span class="nns-story-block__title">${block.title}</span><ul class="nns-story-block__list">${items}</ul></div>`;
   };
 
   const forceHeroPalette = () => {
@@ -373,18 +479,14 @@ Commercialization: Managing the "ground-up" logistics: calculating landing costs
   };
 
   const forceStoryParagraphs = () => {
-    const nodes = Array.from(document.querySelectorAll(".home-story__text > div, .home-story__text"));
-    if (nodes.length < 3) return;
+    const nodes = Array.from(document.querySelectorAll(".home-story__text"));
+    if (nodes.length < STORY_BLOCKS.length) return;
 
-    for (let i = 0; i < 3; i += 1) {
-      const node = nodes[i];
-      if (!node) continue;
-      if (i < 2) {
-        node.textContent = STORY_PARAGRAPHS[i];
-      } else {
-        node.innerHTML = STORY_PARAGRAPHS[i].replace(/\n/g, "<br>");
-      }
-    }
+    nodes.slice(0, STORY_BLOCKS.length).forEach((node, index) => {
+      const html = renderStoryBlock(STORY_BLOCKS[index]);
+      node.setAttribute("data-nns-story-block", "true");
+      if (node.innerHTML !== html) node.innerHTML = html;
+    });
   };
 
   const forceFixedLabels = () => {
@@ -556,6 +658,7 @@ Commercialization: Managing the "ground-up" logistics: calculating landing costs
   const applyAll = (root = document.body) => {
     forceMeta();
     applyVisualCleanup();
+    applyStoryLayoutStyles();
     forceHeroPalette();
     if (root) applyText(root);
     keepOnlyFirstProjectsPage();
