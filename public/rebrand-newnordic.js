@@ -12,7 +12,26 @@
   const STORY_PARAGRAPHS = [
     "A multi-disciplinary creative studio bridging the gap between high-level heritage strategy and the fast-paced digital landscape. From brand guardianship to performance-led content, we build visual ecosystems that endure.",
     "We don't just design; we build the systems, stories, and performance-led UGC streams that define modern market leaders. From seasonal storytelling arcs to high-retention video assets, we bridge the gap between aesthetic excellence and measurable revenue.",
-    "Our goal is to help businesses cut through the noise, build meaningful connections with their audience, and drive measurable engagement that translates into business growth.",
+    `Pillar I: Brand Architecture & Narrative
+Brand Guardianship: Defining the tone of voice and ensuring aesthetic consistency across every consumer touchpoint: from retail environments to digital media.
+
+Narrative Frameworks: Developing seasonal storytelling arcs and messaging pillars that resonate emotionally with target consumers.
+
+Innovation Strategy: Utilizing competitive research and trend analysis to guide long-term investment and business transformation.
+
+Pillar II: Performance Creative & UGC
+Platform-Native Content: Creating, testing, and scaling high-retention short-form video (UGC) for Meta, TikTok, and Pinterest.
+
+Retention Strategy: Analyzing performance signals: CTR, hooks, and CPA, to iterate and improve output based on real-time data.
+
+360 Integrated Campaigns: Leading the execution of product launches and hero campaigns from initial insight to a global creative toolkit.
+
+Pillar III: Commercial Operations & Design
+Tactile Design: Premium physical branding, from bespoke menu and packaging and label design and editorial layouts to sourcing sustainable branding materials.
+
+DTC Infrastructure: Building the operational backbone: connecting domains, customizing POS systems, and architecting e-commerce layouts.
+
+Commercialization: Managing the "ground-up" logistics: calculating landing costs, profit margins, and vendor relations to build sustainable revenue channels.`,
   ];
   const CLIENT_CARD_BASE_NAMES = ["01", "02", "03", "04", "05", "06", "07", "08"];
   const CLIENT_CARD_EXTENSIONS = [
@@ -360,7 +379,7 @@
     for (let i = 0; i < 3; i += 1) {
       const node = nodes[i];
       if (!node) continue;
-      node.textContent = STORY_PARAGRAPHS[i];
+      node.innerHTML = STORY_PARAGRAPHS[i].replace(/\n/g, "<br>");
     }
   };
 
