@@ -10,8 +10,8 @@
   const CONTACT_BLURB =
     "Eager to explore a collaboration?<br><br>contact@newnordicstudios.com<br>+46 72 322 2185";
   const STORY_PARAGRAPHS = [
-    "In today’s digital-first world, a brand’s online presence is more than just a marketing tool—it’s a direct reflection of its identity, credibility, and influence.",
-    "New Nordic Studios is a full-service social media agency specializing in content creation, brand storytelling, and digital strategy.",
+    "A multi-disciplinary creative studio bridging the gap between high-level heritage strategy and the fast-paced digital landscape. From brand guardianship to performance-led content, we build visual ecosystems that endure.",
+    "We don't just design; we build the systems, stories, and performance-led UGC streams that define modern market leaders. From seasonal storytelling arcs to high-retention video assets, we bridge the gap between aesthetic excellence and measurable revenue.",
     `Pillar I: Brand Architecture & Narrative
 Brand Guardianship: Defining the tone of voice and ensuring aesthetic consistency across every consumer touchpoint: from retail environments to digital media.
 
@@ -379,7 +379,11 @@ Commercialization: Managing the "ground-up" logistics: calculating landing costs
     for (let i = 0; i < 3; i += 1) {
       const node = nodes[i];
       if (!node) continue;
-      node.innerHTML = STORY_PARAGRAPHS[i].replace(/\n/g, "<br>");
+      if (i < 2) {
+        node.textContent = STORY_PARAGRAPHS[i];
+      } else {
+        node.innerHTML = STORY_PARAGRAPHS[i].replace(/\n/g, "<br>");
+      }
     }
   };
 
