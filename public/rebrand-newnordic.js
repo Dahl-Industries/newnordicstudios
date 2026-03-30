@@ -2,6 +2,8 @@
   const BRAND = "New Nordic Studios";
   const HERO_BACKGROUND = "#d6ccc4";
   const HERO_TEXT = "#372d26";
+  const HERO_SMOKE = "#9a8474";
+  const HERO_SMOKE_OPACITY = 0.34;
   const HERO_COPY =
     "New Nordic Studios is a full stack creative consultancy firm.";
   const BRAND_BLURB =
@@ -103,12 +105,245 @@
     ensureLink("apple-touch-icon", "/apple-touch-icon.png?v=1");
   };
 
+  const smokeFragmentShaderSource = `#version 300 es
+precision highp float;
+out vec4 O;
+uniform float time;
+uniform vec2 resolution;
+uniform vec3 u_color;
+uniform float u_opacity;
+
+#define FC gl_FragCoord.xy
+#define R resolution
+#define T (time + 660.0)
+
+float rnd(vec2 p){p=fract(p*vec2(12.9898,78.233));p+=dot(p,p+34.56);return fract(p.x*p.y);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.0-2.0*f);return mix(mix(rnd(i),rnd(i+vec2(1.0,0.0)),u.x),mix(rnd(i+vec2(0.0,1.0)),rnd(i+vec2(1.0,1.0)),u.x),u.y);}
+float fbm(vec2 p){float t=0.0,a=1.0;for(int i=0;i<5;i++){t+=a*noise(p);p*=mat2(1.0,-1.2,0.2,1.2)*2.0;a*=0.5;}return t;}
+
+void main(){
+  vec2 uv=(FC-.5*R)/R.y;
+  uv.x+=.2;
+  uv*=vec2(2.0,1.0);
+
+  float n=fbm(uv*.28-vec2(T*.01,0.0));
+  n=noise(uv*3.0+n*2.0);
+
+  vec3 col=vec3(1.0);
+  col.r-=fbm(uv+vec2(0.0,T*.015)+n);
+  col.g-=fbm(uv*1.003+vec2(0.0,T*.015)+n+.003);
+  col.b-=fbm(uv*1.006+vec2(0.0,T*.015)+n+.006);
+
+  float smoke=1.0-clamp(dot(col,vec3(.21,.71,.07)),0.0,1.0);
+  smoke=smoothstep(0.18,0.92,smoke);
+
+  vec3 tint=mix(u_color*.82,u_color,smoke);
+  O=vec4(tint,smoke*u_opacity);
+}`;
+
+  class SmokeRenderer {
+    constructor(canvas, fragmentSource) {
+      this.canvas = canvas;
+      this.gl = canvas.getContext("webgl2", { alpha: true, antialias: true });
+      this.program = null;
+      this.vs = null;
+      this.fs = null;
+      this.buffer = null;
+      this.color = [0.6, 0.52, 0.46];
+      this.opacity = HERO_SMOKE_OPACITY;
+      this.vertexSrc = `#version 300 es
+precision highp float;
+in vec4 position;
+void main(){gl_Position=position;}`;
+      this.vertices = [-1, 1, -1, -1, 1, 1, 1, -1];
+      if (!this.gl) return;
+      this.setup(fragmentSource);
+      this.init();
+    }
+
+    updateColor(newColor) {
+      this.color = newColor;
+    }
+
+    updateOpacity(opacity) {
+      this.opacity = opacity;
+    }
+
+    updateScale() {
+      if (!this.gl) return;
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const rect = this.canvas.getBoundingClientRect();
+      const width = Math.max(1, Math.round(rect.width * dpr));
+      const height = Math.max(1, Math.round(rect.height * dpr));
+      this.canvas.width = width;
+      this.canvas.height = height;
+      this.gl.viewport(0, 0, width, height);
+    }
+
+    compile(shader, source) {
+      if (!this.gl) return;
+      this.gl.shaderSource(shader, source);
+      this.gl.compileShader(shader);
+      if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+        console.error(`Shader compilation error: ${this.gl.getShaderInfoLog(shader)}`);
+      }
+    }
+
+    setup(fragmentSource) {
+      if (!this.gl) return;
+      this.vs = this.gl.createShader(this.gl.VERTEX_SHADER);
+      this.fs = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+      const program = this.gl.createProgram();
+      if (!this.vs || !this.fs || !program) return;
+      this.compile(this.vs, this.vertexSrc);
+      this.compile(this.fs, fragmentSource);
+      this.program = program;
+      this.gl.attachShader(program, this.vs);
+      this.gl.attachShader(program, this.fs);
+      this.gl.linkProgram(program);
+      if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
+        console.error(`Program linking error: ${this.gl.getProgramInfoLog(program)}`);
+      }
+    }
+
+    init() {
+      if (!this.gl || !this.program) return;
+      this.buffer = this.gl.createBuffer();
+      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+      this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.vertices), this.gl.STATIC_DRAW);
+      const position = this.gl.getAttribLocation(this.program, "position");
+      this.gl.enableVertexAttribArray(position);
+      this.gl.vertexAttribPointer(position, 2, this.gl.FLOAT, false, 0, 0);
+      this.gl.enable(this.gl.BLEND);
+      this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+      Object.assign(this.program, {
+        resolution: this.gl.getUniformLocation(this.program, "resolution"),
+        time: this.gl.getUniformLocation(this.program, "time"),
+        u_color: this.gl.getUniformLocation(this.program, "u_color"),
+        u_opacity: this.gl.getUniformLocation(this.program, "u_opacity"),
+      });
+    }
+
+    render(now = 0) {
+      if (!this.gl || !this.program || !this.buffer || !this.gl.isProgram(this.program)) return;
+      this.gl.clearColor(0, 0, 0, 0);
+      this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+      this.gl.useProgram(this.program);
+      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+      this.gl.uniform2f(this.program.resolution, this.canvas.width, this.canvas.height);
+      this.gl.uniform1f(this.program.time, now * 1e-3);
+      this.gl.uniform3fv(this.program.u_color, this.color);
+      this.gl.uniform1f(this.program.u_opacity, this.opacity);
+      this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    reset() {
+      if (!this.gl) return;
+      if (this.buffer) this.gl.deleteBuffer(this.buffer);
+      if (!this.program) return;
+      if (this.vs) {
+        this.gl.detachShader(this.program, this.vs);
+        this.gl.deleteShader(this.vs);
+      }
+      if (this.fs) {
+        this.gl.detachShader(this.program, this.fs);
+        this.gl.deleteShader(this.fs);
+      }
+      this.gl.deleteProgram(this.program);
+      this.program = null;
+    }
+  }
+
+  const hexToRgb = (hex) => {
+    const value = (hex || "").replace("#", "").trim();
+    const normalized =
+      value.length === 3 ? value.split("").map((char) => char + char).join("") : value;
+    const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalized);
+    return result
+      ? [
+          parseInt(result[1], 16) / 255,
+          parseInt(result[2], 16) / 255,
+          parseInt(result[3], 16) / 255,
+        ]
+      : null;
+  };
+
+  const destroyHeroSmoke = () => {
+    const state = window.__nnsHeroSmoke;
+    if (!state) return;
+    if (state.frameId) window.cancelAnimationFrame(state.frameId);
+    if (state.handleResize) window.removeEventListener("resize", state.handleResize);
+    if (state.renderer) state.renderer.reset();
+    if (state.layer && state.layer.parentNode) state.layer.parentNode.removeChild(state.layer);
+    window.__nnsHeroSmoke = null;
+  };
+
+  const ensureHeroSmoke = () => {
+    const rawPath = window.location.pathname || "/";
+    const path = rawPath.endsWith("/") && rawPath !== "/" ? rawPath.slice(0, -1) : rawPath;
+    if (path !== "/") {
+      destroyHeroSmoke();
+      return;
+    }
+
+    const wrapper = document.querySelector(".intro__wrapper");
+    if (!wrapper) return;
+
+    let state = window.__nnsHeroSmoke;
+    if (!state || state.parent !== wrapper || !state.layer?.isConnected) {
+      destroyHeroSmoke();
+
+      const layer = document.createElement("div");
+      layer.className = "nns-smoke-layer";
+      layer.setAttribute("aria-hidden", "true");
+
+      const canvas = document.createElement("canvas");
+      layer.appendChild(canvas);
+      wrapper.insertBefore(layer, wrapper.firstChild);
+
+      const renderer = new SmokeRenderer(canvas, smokeFragmentShaderSource);
+      const handleResize = () => {
+        const current = window.__nnsHeroSmoke;
+        if (current?.renderer) current.renderer.updateScale();
+      };
+
+      state = {
+        parent: wrapper,
+        layer,
+        canvas,
+        renderer,
+        frameId: 0,
+        handleResize,
+      };
+
+      window.__nnsHeroSmoke = state;
+      handleResize();
+      window.addEventListener("resize", handleResize);
+
+      const loop = (now) => {
+        const current = window.__nnsHeroSmoke;
+        if (!current?.renderer) return;
+        current.renderer.render(now);
+        current.frameId = window.requestAnimationFrame(loop);
+      };
+
+      state.frameId = window.requestAnimationFrame(loop);
+    }
+
+    const rgb = hexToRgb(HERO_SMOKE);
+    if (rgb && state.renderer) state.renderer.updateColor(rgb);
+    if (state.renderer) {
+      state.renderer.updateOpacity(HERO_SMOKE_OPACITY);
+      state.renderer.updateScale();
+    }
+  };
+
   const applyVisualCleanup = () => {
     if (document.getElementById("nns-cleanup-style")) return;
     const style = document.createElement("style");
     style.id = "nns-cleanup-style";
     style.textContent =
-      ".intro__illu,.intro__illu>div,.intro__illu canvas,.home-projects .home-projects__row:nth-of-type(2){display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){.intro__title{font-size:clamp(3.75rem,16.5vw,5.5rem)!important;line-height:1.02!important;}.intro__title>span{flex:0 0 auto!important;}.intro__title>span:first-child{white-space:nowrap!important;}.intro__club{transform:none!important;}}";
+      ".intro,.intro__wrapper{position:relative!important;overflow:hidden!important;isolation:isolate!important;}.intro__wrapper>:not(.nns-smoke-layer){position:relative!important;z-index:1!important;}.nns-smoke-layer{position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;}.nns-smoke-layer canvas{width:100%!important;height:100%!important;display:block!important;}.intro__illu,.intro__illu>div,.intro__illu canvas,.home-projects .home-projects__row:nth-of-type(2){display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}.home-projects .project-preview,.home-projects .project-preview *{pointer-events:none!important;cursor:default!important;}.home-projects .project-preview:focus{outline:none!important;}.home-projects .project-preview__image-hover{display:none!important;opacity:0!important;visibility:hidden!important;}.home-projects__row:hover .project-preview__image:not(:hover),.home-projects .project-preview__image,.home-projects .project-preview__image *{-webkit-filter:none!important;filter:none!important;}.home-projects .project-preview__image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;}.overlay.is-home .overlay__step:first-of-type{display:none!important;}.contact .footer__links .footer__link:not(:first-child){margin-top:.25rem!important;}@media (max-width:47.99rem){.intro__title{font-size:clamp(3.75rem,16.5vw,5.5rem)!important;line-height:1.02!important;}.intro__title>span{flex:0 0 auto!important;}.intro__title>span:first-child{white-space:nowrap!important;}.intro__club{transform:none!important;}}";
     document.head.appendChild(style);
   };
 
@@ -533,6 +768,7 @@
   const applyAll = (root = document.body) => {
     forceMeta();
     applyVisualCleanup();
+    ensureHeroSmoke();
     forceHeroPalette();
     if (root) applyText(root);
     keepOnlyFirstProjectsPage();
@@ -564,6 +800,7 @@
       forceStoryParagraphs();
       normalizeRules();
       forceFixedLabels();
+      ensureHeroSmoke();
       forceHeroPalette();
     }, 400);
   };
