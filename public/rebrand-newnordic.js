@@ -47,6 +47,18 @@
     "WEBP",
   ];
   const clientCardAvailability = {};
+  const MOBILE_BREAKPOINT_QUERY = "(max-width: 47.99rem)";
+
+  const getNormalizedPath = () => {
+    const rawPath = window.location.pathname || "/";
+    return rawPath.endsWith("/") && rawPath !== "/" ? rawPath.slice(0, -1) : rawPath;
+  };
+
+  const isHomePage = () => getNormalizedPath() === "/";
+
+  const isMobileViewport = () =>
+    typeof window.matchMedia === "function" &&
+    window.matchMedia(MOBILE_BREAKPOINT_QUERY).matches;
 
   const textReplacements = [
     [/\bParis, France\b/gi, "Stockholm, Sweden"],
@@ -276,10 +288,12 @@
     style.textContent = `
       @media (max-width: 47.99rem) {
         .page--index[data-v-2d54c737] {
-          padding-bottom: calc(100vh + 50px) !important;
+          padding-bottom: calc(120svh + 72px) !important;
         }
 
         .intro {
+          background: ${HERO_BACKGROUND} !important;
+          background-color: ${HERO_BACKGROUND} !important;
           -webkit-clip-path: var(--masking-container) !important;
           clip-path: var(--masking-container) !important;
           height: 100svh !important;
@@ -290,6 +304,8 @@
         }
 
         .intro__wrapper {
+          background: ${HERO_BACKGROUND} !important;
+          background-color: ${HERO_BACKGROUND} !important;
           display: block !important;
           height: 100svh !important;
           min-height: 100svh !important;
@@ -304,24 +320,31 @@
         }
 
         .intro__title {
-          bottom: max(1rem, env(safe-area-inset-bottom)) !important;
-          font-size: clamp(3.4rem, 14.75vw, 4.8rem) !important;
-          left: 0.75rem !important;
-          line-height: 0.88 !important;
-          max-width: calc(100vw - 2rem) !important;
+          bottom: max(2.1rem, calc(env(safe-area-inset-bottom) + 1.15rem)) !important;
+          font-size: clamp(3rem, 13.1vw, 4.35rem) !important;
+          left: 0.875rem !important;
+          letter-spacing: -0.045em !important;
+          line-height: 0.9 !important;
+          max-width: min(18.75rem, calc(100vw - 1.75rem)) !important;
           position: absolute !important;
-          right: 0.75rem !important;
+          right: auto !important;
           top: auto !important;
           width: auto !important;
         }
 
         .home-story {
-          height: 200svh !important;
+          height: 235svh !important;
           margin-top: 100svh !important;
           position: relative !important;
         }
 
+        .home-projects {
+          margin-top: 0 !important;
+        }
+
         .home-story__sticky {
+          background: #212121 !important;
+          background-color: #212121 !important;
           height: 100svh !important;
           padding: 0 !important;
           position: sticky !important;
@@ -329,48 +352,62 @@
         }
 
         .home-story__sticky .home-story-image {
-          display: block !important;
+          display: none !important;
         }
 
         .home-story__sticky .grid {
-          display: grid !important;
-          grid: repeat(10, 1fr) / repeat(5, 1fr) !important;
-          height: 100% !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 1.85rem !important;
+          height: auto !important;
           left: 0 !important;
-          padding: 0 0.625rem 1.5rem !important;
+          padding:
+            max(55svh, calc(env(safe-area-inset-top) + 21rem))
+            0.875rem
+            max(2rem, calc(env(safe-area-inset-bottom) + 1.1rem)) !important;
           position: absolute !important;
           top: 0 !important;
+          transform: translateY(var(--nns-mobile-story-shift, 0px)) !important;
+          will-change: transform !important;
           width: 100% !important;
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block] {
           font-size: 0.62rem !important;
-          line-height: 0.8rem !important;
-          max-width: 100% !important;
+          line-height: 0.82rem !important;
+          max-width: min(17rem, 100%) !important;
           overflow-wrap: anywhere !important;
-          padding: 0 0.35rem !important;
+          padding: 0 !important;
           width: 100% !important;
           word-break: break-word !important;
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block]:first-of-type {
-          grid-area: 2 / 1 / auto / span 5 !important;
+          margin-right: auto !important;
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(2) {
-          grid-area: 6 / 1 / auto / span 5 !important;
+          margin-left: auto !important;
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(3) {
-          grid-area: 9 / 1 / auto / span 5 !important;
+          margin-right: auto !important;
+        }
+
+        .nns-story-block {
+          max-width: 16.75rem !important;
         }
 
         .nns-story-block__title {
-          margin-bottom: 0.65rem !important;
+          margin-bottom: 0.55rem !important;
+        }
+
+        .nns-story-block__list {
+          padding-left: 0.9rem !important;
         }
 
         .nns-story-block__item + .nns-story-block__item {
-          margin-top: 0.7rem !important;
+          margin-top: 0.62rem !important;
         }
 
         .nns-story-block__label,
@@ -395,9 +432,7 @@
   };
 
   const forceHeroPalette = () => {
-    const rawPath = window.location.pathname || "/";
-    const path = rawPath.endsWith("/") && rawPath !== "/" ? rawPath.slice(0, -1) : rawPath;
-    if (path !== "/") return;
+    if (!isHomePage()) return;
 
     const backgroundNodes = document.querySelectorAll(".intro, .intro__wrapper");
     backgroundNodes.forEach((node) => {
@@ -412,6 +447,42 @@
     textNodes.forEach((node) => {
       node.style.setProperty("color", HERO_TEXT, "important");
     });
+  };
+
+  const maintainMobileHeroPalette = () => {
+    if (window.__nnsMobileHeroPaletteBound) return;
+
+    const syncMobileStoryShift = () => {
+      if (!isHomePage() || !isMobileViewport()) {
+        document.documentElement.style.setProperty("--nns-mobile-story-shift", "0px");
+        return;
+      }
+
+      const rawY = getComputedStyle(document.documentElement).getPropertyValue("--y");
+      const y = Number.parseFloat(rawY);
+      if (!Number.isFinite(y)) {
+        document.documentElement.style.setProperty("--nns-mobile-story-shift", "0px");
+        return;
+      }
+
+      const shift = Math.min(0, Math.max(y * 0.42, -320));
+      document.documentElement.style.setProperty("--nns-mobile-story-shift", shift + "px");
+    };
+
+    const syncPalette = () => {
+      if (isHomePage() && isMobileViewport()) {
+        const y = window.scrollY || document.documentElement.scrollTop || 0;
+        if (y <= window.innerHeight * 1.35) {
+          forceHeroPalette();
+        }
+      }
+
+      syncMobileStoryShift();
+      window.__nnsMobileHeroPaletteFrame = window.requestAnimationFrame(syncPalette);
+    };
+
+    window.__nnsMobileHeroPaletteBound = true;
+    window.__nnsMobileHeroPaletteFrame = window.requestAnimationFrame(syncPalette);
   };
 
   const forceClientCardImages = () => {
@@ -819,6 +890,7 @@
     applyStoryLayoutStyles();
     applyMobileAnimationStyles();
     forceHeroPalette();
+    maintainMobileHeroPalette();
     if (root) applyText(root);
     keepOnlyFirstProjectsPage();
     makeClientCardsStatic();
