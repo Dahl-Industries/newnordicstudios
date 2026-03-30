@@ -329,7 +329,15 @@
           position: absolute !important;
           right: auto !important;
           top: auto !important;
+          transform: translate3d(0, var(--nns-mobile-title-lift, 0px), 0) !important;
+          will-change: transform !important;
           width: auto !important;
+        }
+
+        .intro__club {
+          transform: translate3d(var(--nns-mobile-title-slide, 0px), 0, 0) !important;
+          transform-origin: left center !important;
+          will-change: transform !important;
         }
 
         .home-story {
@@ -452,6 +460,38 @@
   const maintainMobileHeroPalette = () => {
     if (window.__nnsMobileHeroPaletteBound) return;
 
+    const syncMobileTitleMotion = () => {
+      if (!isHomePage() || !isMobileViewport()) {
+        document.documentElement.style.setProperty("--nns-mobile-title-slide", "0px");
+        document.documentElement.style.setProperty("--nns-mobile-title-lift", "0px");
+        window.__nnsMobileTitleMetrics = null;
+        return;
+      }
+
+      const title = document.querySelector(".intro__title");
+      const club = document.querySelector(".intro__club");
+      if (!title || !club) return;
+
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+      const cached = window.__nnsMobileTitleMetrics;
+
+      if (!cached || cached.viewportWidth !== viewportWidth) {
+        const titleLeft = title.offsetLeft || Math.round(title.getBoundingClientRect().left);
+        const clubLeft = club.offsetLeft || 0;
+        const baseRight = titleLeft + clubLeft + club.offsetWidth;
+        const maxSlide = Math.max(0, viewportWidth - titleLeft - baseRight);
+        window.__nnsMobileTitleMetrics = { maxSlide, viewportWidth };
+      }
+
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      const progress = Math.max(0, Math.min(y / Math.max(window.innerHeight || 1, 1), 1));
+      const slide = (window.__nnsMobileTitleMetrics?.maxSlide || 0) * progress;
+      const lift = -22 * Math.min(progress, 1);
+
+      document.documentElement.style.setProperty("--nns-mobile-title-slide", slide + "px");
+      document.documentElement.style.setProperty("--nns-mobile-title-lift", lift + "px");
+    };
+
     const syncMobileStoryShift = () => {
       if (!isHomePage() || !isMobileViewport()) {
         document.documentElement.style.setProperty("--nns-mobile-story-shift", "0px");
@@ -477,6 +517,7 @@
         }
       }
 
+      syncMobileTitleMotion();
       syncMobileStoryShift();
       window.__nnsMobileHeroPaletteFrame = window.requestAnimationFrame(syncPalette);
     };
