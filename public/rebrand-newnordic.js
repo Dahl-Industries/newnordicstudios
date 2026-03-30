@@ -117,9 +117,7 @@
     const path = rawPath.endsWith("/") && rawPath !== "/" ? rawPath.slice(0, -1) : rawPath;
     if (path !== "/") return;
 
-    const backgroundNodes = document.querySelectorAll(
-      "html, body, #__nuxt, .intro, .intro__wrapper, .header",
-    );
+    const backgroundNodes = document.querySelectorAll(".intro, .intro__wrapper, .header");
     backgroundNodes.forEach((node) => {
       node.style.setProperty("background", HERO_BACKGROUND, "important");
       node.style.setProperty("background-color", HERO_BACKGROUND, "important");
@@ -128,7 +126,7 @@
     });
 
     const textNodes = document.querySelectorAll(
-      "body, body *, .intro, .intro *, .header, .header *, #overlay__intro, #overlay__intro *",
+      ".intro, .intro *, .header, .header *, #overlay__intro, #overlay__intro *",
     );
     textNodes.forEach((node) => {
       node.style.setProperty("color", HERO_TEXT, "important");
