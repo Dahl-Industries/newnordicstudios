@@ -288,31 +288,35 @@
     style.textContent = `
       @media (max-width: 47.99rem) {
         .page--index[data-v-2d54c737] {
-          padding-bottom: calc(120svh + 72px) !important;
+          padding-bottom: 0 !important;
         }
 
         .intro {
           background: ${HERO_BACKGROUND} !important;
           background-color: ${HERO_BACKGROUND} !important;
-          -webkit-clip-path: var(--masking-container) !important;
-          clip-path: var(--masking-container) !important;
-          height: 100svh !important;
-          min-height: 100svh !important;
+          -webkit-clip-path: none !important;
+          clip-path: none !important;
+          height: 100dvh !important;
+          min-height: 100dvh !important;
+          inset: 0 0 auto 0 !important;
+          opacity: var(--nns-mobile-hero-opacity, 1) !important;
           pointer-events: auto !important;
           position: fixed !important;
-          top: 0 !important;
+          width: 100% !important;
+          will-change: opacity !important;
+          z-index: 4 !important;
         }
 
         .intro__wrapper {
           background: ${HERO_BACKGROUND} !important;
           background-color: ${HERO_BACKGROUND} !important;
           display: block !important;
-          height: 100svh !important;
-          min-height: 100svh !important;
+          height: 100dvh !important;
+          min-height: 100dvh !important;
           padding: 0 !important;
-          position: sticky !important;
-          top: 0 !important;
-          transform: translateY(var(--y)) !important;
+          position: relative !important;
+          top: auto !important;
+          transform: none !important;
         }
 
         .intro__grid {
@@ -325,25 +329,31 @@
           left: 0.875rem !important;
           letter-spacing: -0.045em !important;
           line-height: 0.9 !important;
-          max-width: min(18.75rem, calc(100vw - 1.75rem)) !important;
+          max-width: min(19.5rem, calc(100vw - 1.75rem)) !important;
           position: absolute !important;
           right: auto !important;
           top: auto !important;
-          transform: translate3d(0, var(--nns-mobile-title-lift, 0px), 0) !important;
+          transform:
+            translate3d(var(--nns-mobile-title-x, 0px), var(--nns-mobile-title-y, 0px), 0)
+            scale(var(--nns-mobile-title-scale, 1)) !important;
+          transform-origin: left bottom !important;
           will-change: transform !important;
           width: auto !important;
         }
 
         .intro__club {
-          transform: translate3d(var(--nns-mobile-title-slide, 0px), 0, 0) !important;
-          transform-origin: left center !important;
-          will-change: transform !important;
+          margin-top: 0.06em !important;
+          transform: none !important;
         }
 
         .home-story {
-          height: 235svh !important;
-          margin-top: 100svh !important;
+          background: #212121 !important;
+          background-color: #212121 !important;
+          height: auto !important;
+          margin-top: 100dvh !important;
+          padding: 1.5rem 0 max(3.25rem, calc(env(safe-area-inset-bottom) + 2.25rem)) !important;
           position: relative !important;
+          z-index: 5 !important;
         }
 
         .home-projects {
@@ -351,12 +361,13 @@
         }
 
         .home-story__sticky {
-          background: #212121 !important;
-          background-color: #212121 !important;
-          height: 100svh !important;
+          background: transparent !important;
+          background-color: transparent !important;
+          height: auto !important;
+          min-height: 0 !important;
           padding: 0 !important;
-          position: sticky !important;
-          top: 0 !important;
+          position: relative !important;
+          top: auto !important;
         }
 
         .home-story__sticky .home-story-image {
@@ -366,24 +377,20 @@
         .home-story__sticky .grid {
           display: flex !important;
           flex-direction: column !important;
-          gap: 1.85rem !important;
+          gap: 1.6rem !important;
           height: auto !important;
-          left: 0 !important;
-          padding:
-            max(55svh, calc(env(safe-area-inset-top) + 21rem))
-            0.875rem
-            max(2rem, calc(env(safe-area-inset-bottom) + 1.1rem)) !important;
-          position: absolute !important;
-          top: 0 !important;
-          transform: translateY(var(--nns-mobile-story-shift, 0px)) !important;
-          will-change: transform !important;
+          left: auto !important;
+          padding: 0 1rem !important;
+          position: relative !important;
+          top: auto !important;
+          transform: none !important;
           width: 100% !important;
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block] {
-          font-size: 0.62rem !important;
-          line-height: 0.82rem !important;
-          max-width: min(17rem, 100%) !important;
+          font-size: 0.64rem !important;
+          line-height: 0.88rem !important;
+          max-width: min(18rem, calc(100vw - 2rem)) !important;
           overflow-wrap: anywhere !important;
           padding: 0 !important;
           width: 100% !important;
@@ -403,11 +410,11 @@
         }
 
         .nns-story-block {
-          max-width: 16.75rem !important;
+          max-width: 18rem !important;
         }
 
         .nns-story-block__title {
-          margin-bottom: 0.55rem !important;
+          margin-bottom: 0.65rem !important;
         }
 
         .nns-story-block__list {
@@ -415,7 +422,7 @@
         }
 
         .nns-story-block__item + .nns-story-block__item {
-          margin-top: 0.62rem !important;
+          margin-top: 0.78rem !important;
         }
 
         .nns-story-block__label,
@@ -460,70 +467,81 @@
   const maintainMobileHeroPalette = () => {
     if (window.__nnsMobileHeroPaletteBound) return;
 
+    const resetMobileHeroMotion = () => {
+      document.documentElement.style.setProperty("--nns-mobile-title-x", "0px");
+      document.documentElement.style.setProperty("--nns-mobile-title-y", "0px");
+      document.documentElement.style.setProperty("--nns-mobile-title-scale", "1");
+      document.documentElement.style.setProperty("--nns-mobile-hero-opacity", "1");
+      window.__nnsMobileTitleMetrics = null;
+    };
+
     const syncMobileTitleMotion = () => {
       if (!isHomePage() || !isMobileViewport()) {
-        document.documentElement.style.setProperty("--nns-mobile-title-slide", "0px");
-        document.documentElement.style.setProperty("--nns-mobile-title-lift", "0px");
-        window.__nnsMobileTitleMetrics = null;
+        resetMobileHeroMotion();
         return;
       }
 
       const title = document.querySelector(".intro__title");
-      const club = document.querySelector(".intro__club");
-      if (!title || !club) return;
+      if (!title) return;
 
       const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
       const cached = window.__nnsMobileTitleMetrics;
 
-      if (!cached || cached.viewportWidth !== viewportWidth) {
+      if (
+        !cached ||
+        cached.viewportWidth !== viewportWidth ||
+        cached.viewportHeight !== viewportHeight
+      ) {
         const titleLeft = title.offsetLeft || Math.round(title.getBoundingClientRect().left);
-        const clubLeft = club.offsetLeft || 0;
-        const baseRight = titleLeft + clubLeft + club.offsetWidth;
-        const maxSlide = Math.max(0, viewportWidth - titleLeft - baseRight);
-        window.__nnsMobileTitleMetrics = { maxSlide, viewportWidth };
+        const titleWidth = title.offsetWidth || Math.round(title.getBoundingClientRect().width);
+        const maxShiftX = Math.max(0, viewportWidth - titleLeft - titleWidth - 12);
+        const maxShiftY = Math.min(72, Math.round(viewportHeight * 0.12));
+        window.__nnsMobileTitleMetrics = {
+          maxShiftX,
+          maxShiftY,
+          viewportHeight,
+          viewportWidth,
+        };
       }
 
       const y = window.scrollY || document.documentElement.scrollTop || 0;
-      const progress = Math.max(0, Math.min(y / Math.max(window.innerHeight || 1, 1), 1));
-      const slide = (window.__nnsMobileTitleMetrics?.maxSlide || 0) * progress;
-      const lift = -22 * Math.min(progress, 1);
+      const progress = Math.max(0, Math.min(y / Math.max(viewportHeight || 1, 1), 1));
+      const shiftX = (window.__nnsMobileTitleMetrics?.maxShiftX || 0) * progress;
+      const shiftY = -(window.__nnsMobileTitleMetrics?.maxShiftY || 0) * progress;
+      const scale = 1 - progress * 0.045;
+      const opacity = 1 - progress * 0.08;
 
-      document.documentElement.style.setProperty("--nns-mobile-title-slide", slide + "px");
-      document.documentElement.style.setProperty("--nns-mobile-title-lift", lift + "px");
-    };
-
-    const syncMobileStoryShift = () => {
-      if (!isHomePage() || !isMobileViewport()) {
-        document.documentElement.style.setProperty("--nns-mobile-story-shift", "0px");
-        return;
-      }
-
-      const rawY = getComputedStyle(document.documentElement).getPropertyValue("--y");
-      const y = Number.parseFloat(rawY);
-      if (!Number.isFinite(y)) {
-        document.documentElement.style.setProperty("--nns-mobile-story-shift", "0px");
-        return;
-      }
-
-      const shift = Math.min(0, Math.max(y * 0.42, -320));
-      document.documentElement.style.setProperty("--nns-mobile-story-shift", shift + "px");
+      document.documentElement.style.setProperty("--nns-mobile-title-x", shiftX + "px");
+      document.documentElement.style.setProperty("--nns-mobile-title-y", shiftY + "px");
+      document.documentElement.style.setProperty("--nns-mobile-title-scale", String(scale));
+      document.documentElement.style.setProperty("--nns-mobile-hero-opacity", String(opacity));
     };
 
     const syncPalette = () => {
       if (isHomePage() && isMobileViewport()) {
         const y = window.scrollY || document.documentElement.scrollTop || 0;
-        if (y <= window.innerHeight * 1.35) {
+        if (y <= window.innerHeight * 1.15) {
           forceHeroPalette();
         }
       }
 
       syncMobileTitleMotion();
-      syncMobileStoryShift();
-      window.__nnsMobileHeroPaletteFrame = window.requestAnimationFrame(syncPalette);
     };
 
+    const requestSync = () => {
+      if (window.__nnsMobileHeroPaletteFrame) return;
+      window.__nnsMobileHeroPaletteFrame = window.requestAnimationFrame(() => {
+        window.__nnsMobileHeroPaletteFrame = 0;
+        syncPalette();
+      });
+    };
+
+    window.addEventListener("scroll", requestSync, { passive: true });
+    window.addEventListener("resize", requestSync, { passive: true });
+    window.addEventListener("orientationchange", requestSync);
     window.__nnsMobileHeroPaletteBound = true;
-    window.__nnsMobileHeroPaletteFrame = window.requestAnimationFrame(syncPalette);
+    requestSync();
   };
 
   const forceClientCardImages = () => {
@@ -645,62 +663,16 @@
     });
   };
 
-  let canonicalRules = null;
   const normalizeRules = () => {
     const container = document.querySelector(".home-rules .home-rules__container");
     if (!container) return;
 
-    const ruleNodes = Array.from(container.querySelectorAll(".home-rules__row p"));
-    if (!ruleNodes.length) return;
-
-    if (!canonicalRules) {
-      canonicalRules = ruleNodes
-        .map((node) => {
-          const text = (node.textContent || "").trim();
-          const match = text.match(/^\((\d+)\)\s*/);
-          if (!match) return null;
-          const number = Number(match[1]);
-          let body = text.replace(/^\(\d+\)\s*/, "");
-          body = body
-            .replace(/the concrete club/gi, "New Nordic Studios")
-            .replace(/concrete club/gi, "New Nordic Studios")
-            .replace(/the new nordic/gi, "New Nordic Studios")
-            .replace(/new nordic studios studios/gi, "New Nordic Studios")
-            .replace(/\bartists\b/gi, "clients");
-          return { number, body };
-        })
-        .filter(Boolean);
-    }
-
-    const selected = canonicalRules
-      .filter((rule) => rule.number !== 3 && rule.number !== 6)
-      .slice(0, 4);
-
     let rows = Array.from(container.querySelectorAll(".home-rules__row"));
-    if (rows.length < 2) {
-      const needed = 2 - rows.length;
-      for (let i = 0; i < needed; i += 1) {
-        const row = document.createElement("div");
-        row.className = "home-rules__row";
-        container.appendChild(row);
-      }
-      rows = Array.from(container.querySelectorAll(".home-rules__row"));
-    }
+    if (!rows.length) return;
 
-    rows.forEach((row, idx) => {
-      if (idx < 2) {
-        row.innerHTML = "";
-      } else {
-        row.remove();
-      }
-    });
-
-    selected.forEach((rule, idx) => {
-      const row = rows[Math.floor(idx / 2)];
-      if (!row) return;
-      const p = document.createElement("p");
-      p.textContent = "(" + (idx + 1) + ") " + rule.body;
-      row.appendChild(p);
+    rows.forEach((row) => {
+      row.innerHTML = "";
+      row.style.setProperty("display", "none", "important");
     });
   };
 
@@ -944,16 +916,7 @@
   };
 
   const boot = () => {
-    // Keep this lightweight so we do not interfere with Nuxt hydration/render timing.
-    applyAll();
-    setTimeout(() => applyAll(), 800);
-    setTimeout(() => applyAll(), 2000);
-    setTimeout(() => applyAll(), 3500);
-    if (!window.__nnsOverlayLabelScrollBound) {
-      window.addEventListener("scroll", toggleHomeIntroOverlayLabel, { passive: true });
-      window.__nnsOverlayLabelScrollBound = true;
-    }
-    setInterval(() => {
+    const runMaintenance = () => {
       applyText(document.body);
       keepOnlyFirstProjectsPage();
       makeClientCardsStatic();
@@ -963,7 +926,41 @@
       normalizeRules();
       forceFixedLabels();
       forceHeroPalette();
-    }, 400);
+      maintainMobileHeroPalette();
+    };
+
+    // Keep this lightweight so we do not interfere with Nuxt hydration/render timing.
+    applyAll();
+    setTimeout(() => applyAll(), 800);
+    setTimeout(() => applyAll(), 2000);
+    setTimeout(() => applyAll(), 3500);
+    if (!window.__nnsOverlayLabelScrollBound) {
+      window.addEventListener("scroll", toggleHomeIntroOverlayLabel, { passive: true });
+      window.__nnsOverlayLabelScrollBound = true;
+    }
+
+    if (!window.__nnsMaintenanceBound) {
+      const scheduleMaintenance = () => {
+        if (window.__nnsMaintenanceScheduled) return;
+        window.__nnsMaintenanceScheduled = window.requestAnimationFrame(() => {
+          window.__nnsMaintenanceScheduled = 0;
+          runMaintenance();
+        });
+      };
+
+      const observer = new MutationObserver(scheduleMaintenance);
+      observer.observe(document.body, {
+        characterData: true,
+        childList: true,
+        subtree: true,
+      });
+
+      window.__nnsMaintenanceObserver = observer;
+      window.__nnsMaintenanceBound = true;
+      window.__nnsScheduleMaintenance = scheduleMaintenance;
+    }
+
+    window.__nnsScheduleMaintenance?.();
   };
 
   if (document.readyState === "loading") {

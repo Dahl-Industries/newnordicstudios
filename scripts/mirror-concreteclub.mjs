@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.resolve("public");
 const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
 const REBRAND_SCRIPT_PATH = path.join(OUTPUT_DIR, "rebrand-newnordic.js");
-const REBRAND_SCRIPT_SRC = "/rebrand-newnordic.js?v=20260330c";
+const REBRAND_SCRIPT_SRC = "/rebrand-newnordic.js?v=20260331c";
 const BRAND_FAVICON_URL = "/favicon.ico?v=1";
 const BRAND_OG_IMAGE_URL = "/favicon-n.png?v=1";
 const TEXT_FILE_EXTENSIONS = new Set([".mjs", ".js", ".css", ".html", ".json", ".svg"]);
@@ -636,62 +636,16 @@ Commercialization: Managing the "ground-up" logistics: calculating landing costs
     });
   };
 
-  let canonicalRules = null;
   const normalizeRules = () => {
     const container = document.querySelector(".home-rules .home-rules__container");
     if (!container) return;
 
-    const ruleNodes = Array.from(container.querySelectorAll(".home-rules__row p"));
-    if (!ruleNodes.length) return;
-
-    if (!canonicalRules) {
-      canonicalRules = ruleNodes
-        .map((node) => {
-          const text = (node.textContent || "").trim();
-          const match = text.match(/^\\((\\d+)\\)\\s*/);
-          if (!match) return null;
-          const number = Number(match[1]);
-          let body = text.replace(/^\\(\\d+\\)\\s*/, "");
-          body = body
-            .replace(/the concrete club/gi, "New Nordic Studios")
-            .replace(/concrete club/gi, "New Nordic Studios")
-            .replace(/the new nordic/gi, "New Nordic Studios")
-            .replace(/new nordic studios studios/gi, "New Nordic Studios")
-            .replace(/\bartists\b/gi, "clients");
-          return { number, body };
-        })
-        .filter(Boolean);
-    }
-
-    const selected = canonicalRules
-      .filter((rule) => rule.number !== 3 && rule.number !== 6)
-      .slice(0, 4);
-
     let rows = Array.from(container.querySelectorAll(".home-rules__row"));
-    if (rows.length < 2) {
-      const needed = 2 - rows.length;
-      for (let i = 0; i < needed; i += 1) {
-        const row = document.createElement("div");
-        row.className = "home-rules__row";
-        container.appendChild(row);
-      }
-      rows = Array.from(container.querySelectorAll(".home-rules__row"));
-    }
+    if (!rows.length) return;
 
-    rows.forEach((row, idx) => {
-      if (idx < 2) {
-        row.innerHTML = "";
-      } else {
-        row.remove();
-      }
-    });
-
-    selected.forEach((rule, idx) => {
-      const row = rows[Math.floor(idx / 2)];
-      if (!row) return;
-      const p = document.createElement("p");
-      p.textContent = "(" + (idx + 1) + ") " + rule.body;
-      row.appendChild(p);
+    rows.forEach((row) => {
+      row.innerHTML = "";
+      row.style.setProperty("display", "none", "important");
     });
   };
 
