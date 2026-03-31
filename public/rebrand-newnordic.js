@@ -154,24 +154,53 @@
         display: none !important;
       }
 
+      .home-story {
+        height: 220vh !important;
+      }
+
+      .home-projects {
+        margin-top: 0 !important;
+        position: relative !important;
+        z-index: 6 !important;
+      }
+
+      .home-story__sticky {
+        align-items: stretch !important;
+      }
+
+      .home-story__sticky .grid {
+        height: 100% !important;
+        left: 0 !important;
+        padding:
+          clamp(4.75rem, 9vh, 6.5rem)
+          clamp(2rem, 3.25vw, 3.75rem)
+          clamp(4.5rem, 11vh, 7rem) !important;
+        width: 100% !important;
+      }
+
       .home-story__sticky .grid .home-story__text[data-nns-story-block] {
         align-items: flex-start !important;
         display: block !important;
-        max-width: min(29rem, 100%);
+        font-size: clamp(0.92rem, 0.89rem + 0.12vw, 1rem) !important;
+        line-height: clamp(1.12rem, 1.06rem + 0.18vw, 1.24rem) !important;
+        justify-self: start !important;
+        max-width: min(24.5rem, 100%);
         padding: 0 !important;
+        width: 100% !important;
       }
 
       .home-story__sticky .grid .home-story__text[data-nns-story-block]:first-of-type {
-        grid-area: 6 / 4 / auto / span 4;
+        grid-area: 4 / 4 / auto / span 4;
       }
 
       .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(2) {
-        grid-area: 8 / 8 / auto / span 4;
+        grid-area: 7 / 8 / auto / span 4;
+        justify-self: end !important;
       }
 
       .home-story__sticky .grid .home-story__text[data-nns-story-block]:nth-of-type(3) {
-        grid-area: 12 / 4 / auto / span 4;
-        max-width: min(31rem, 100%);
+        grid-area: 10 / 4 / auto / span 5;
+        max-width: min(26rem, 100%);
       }
 
       .nns-story-block {
@@ -210,11 +239,15 @@
           height: auto !important;
           margin-top: 0 !important;
           opacity: 1 !important;
+          padding:
+            max(2.4rem, calc(env(safe-area-inset-top) + 1.1rem))
+            0
+            max(4.5rem, calc(env(safe-area-inset-bottom) + 2.9rem)) !important;
         }
 
         .home-story__sticky {
           height: auto !important;
-          padding: 5rem 1rem 4rem !important;
+          padding: 0 !important;
           position: relative !important;
         }
 
@@ -225,21 +258,21 @@
         .home-story__sticky .grid {
           display: flex !important;
           flex-direction: column !important;
-          gap: 2.5rem !important;
+          gap: 2.35rem !important;
           height: auto !important;
           left: auto !important;
           position: relative !important;
-          padding: 0 !important;
+          padding: 0 1.15rem !important;
           top: auto !important;
           width: 100% !important;
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block] {
-          font-size: 0.68rem !important;
-          line-height: 0.86rem !important;
-          max-width: calc(100vw - 1.5rem) !important;
+          font-size: 0.66rem !important;
+          line-height: 0.94rem !important;
+          max-width: min(17.5rem, calc(100vw - 2.3rem)) !important;
           overflow-wrap: anywhere !important;
-          padding-right: 0.5rem !important;
+          padding-right: 0 !important;
           width: 100% !important;
           word-break: break-word !important;
         }
@@ -251,16 +284,20 @@
         }
 
         .nns-story-block__title {
-          margin-bottom: 0.75rem !important;
+          margin-bottom: 0.85rem !important;
         }
 
         .nns-story-block__item + .nns-story-block__item {
-          margin-top: 0.85rem !important;
+          margin-top: 0.95rem !important;
         }
 
         .nns-story-block__item {
           overflow-wrap: anywhere !important;
           word-break: break-word !important;
+        }
+
+        .nns-story-block__list {
+          padding-left: 1rem !important;
         }
 
         .nns-story-block__label {
@@ -351,7 +388,10 @@
           background-color: #212121 !important;
           height: auto !important;
           margin-top: 100dvh !important;
-          padding: 1.5rem 0 max(3.25rem, calc(env(safe-area-inset-bottom) + 2.25rem)) !important;
+          padding:
+            max(2.4rem, calc(env(safe-area-inset-top) + 1.1rem))
+            0
+            max(4.85rem, calc(env(safe-area-inset-bottom) + 3.2rem)) !important;
           position: relative !important;
           z-index: 5 !important;
         }
@@ -377,10 +417,10 @@
         .home-story__sticky .grid {
           display: flex !important;
           flex-direction: column !important;
-          gap: 1.6rem !important;
+          gap: 2.2rem !important;
           height: auto !important;
           left: auto !important;
-          padding: 0 1rem !important;
+          padding: 0 1.15rem !important;
           position: relative !important;
           top: auto !important;
           transform: none !important;
@@ -388,9 +428,9 @@
         }
 
         .home-story__sticky .grid .home-story__text[data-nns-story-block] {
-          font-size: 0.64rem !important;
-          line-height: 0.88rem !important;
-          max-width: min(18rem, calc(100vw - 2rem)) !important;
+          font-size: 0.63rem !important;
+          line-height: 0.93rem !important;
+          max-width: min(16.85rem, calc(100vw - 2.3rem)) !important;
           overflow-wrap: anywhere !important;
           padding: 0 !important;
           width: 100% !important;
@@ -410,19 +450,19 @@
         }
 
         .nns-story-block {
-          max-width: 18rem !important;
+          max-width: 16.85rem !important;
         }
 
         .nns-story-block__title {
-          margin-bottom: 0.65rem !important;
+          margin-bottom: 0.78rem !important;
         }
 
         .nns-story-block__list {
-          padding-left: 0.9rem !important;
+          padding-left: 0.95rem !important;
         }
 
         .nns-story-block__item + .nns-story-block__item {
-          margin-top: 0.78rem !important;
+          margin-top: 0.92rem !important;
         }
 
         .nns-story-block__label,
