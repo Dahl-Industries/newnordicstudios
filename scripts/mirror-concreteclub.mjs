@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.resolve("public");
 const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
 const REBRAND_SCRIPT_PATH = path.join(OUTPUT_DIR, "rebrand-newnordic.js");
-const REBRAND_SCRIPT_SRC = "/rebrand-newnordic.js?v=20260331c";
+const REBRAND_SCRIPT_SRC = "/rebrand-newnordic.js?v=20260331d";
 const BRAND_FAVICON_URL = "/favicon.ico?v=1";
 const BRAND_OG_IMAGE_URL = "/favicon-n.png?v=1";
 const TEXT_FILE_EXTENSIONS = new Set([".mjs", ".js", ".css", ".html", ".json", ".svg"]);

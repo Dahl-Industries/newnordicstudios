@@ -465,19 +465,55 @@
   };
 
   const maintainMobileHeroPalette = () => {
-    if (window.__nnsMobileHeroPaletteBound) return;
+    if (window.__nnsMobileHeroPaletteBound) {
+      window.__nnsRequestMobileHeroSync?.();
+      return;
+    }
 
-    const resetMobileHeroMotion = () => {
-      document.documentElement.style.setProperty("--nns-mobile-title-x", "0px");
-      document.documentElement.style.setProperty("--nns-mobile-title-y", "0px");
-      document.documentElement.style.setProperty("--nns-mobile-title-scale", "1");
-      document.documentElement.style.setProperty("--nns-mobile-hero-opacity", "1");
+    const clearMobileTitleOverrides = () => {
+      const title = document.querySelector(".intro__title");
+      const club = document.querySelector(".intro__club");
+      if (title) {
+        title.style.removeProperty("transform");
+      }
+      if (club) {
+        club.style.removeProperty("margin-left");
+        club.style.removeProperty("transform");
+        club.style.removeProperty("translate");
+      }
+    };
+
+    const applyMobileTitleState = ({ shiftX = 0, shiftY = 0, scale = 1, opacity = 1 } = {}) => {
+      document.documentElement.style.setProperty("--nns-mobile-title-x", shiftX + "px");
+      document.documentElement.style.setProperty("--nns-mobile-title-y", shiftY + "px");
+      document.documentElement.style.setProperty("--nns-mobile-title-scale", String(scale));
+      document.documentElement.style.setProperty("--nns-mobile-hero-opacity", String(opacity));
+
+      const title = document.querySelector(".intro__title");
+      const club = document.querySelector(".intro__club");
+      if (title) {
+        title.style.setProperty(
+          "transform",
+          `translate3d(${shiftX}px, ${shiftY}px, 0) scale(${scale})`,
+          "important",
+        );
+      }
+      if (club) {
+        club.style.setProperty("margin-left", "0", "important");
+        club.style.setProperty("transform", "none", "important");
+        club.style.setProperty("translate", "none", "important");
+      }
+    };
+
+    const resetMobileHeroMotion = ({ clearOverrides = false } = {}) => {
+      applyMobileTitleState();
       window.__nnsMobileTitleMetrics = null;
+      if (clearOverrides) clearMobileTitleOverrides();
     };
 
     const syncMobileTitleMotion = () => {
       if (!isHomePage() || !isMobileViewport()) {
-        resetMobileHeroMotion();
+        resetMobileHeroMotion({ clearOverrides: true });
         return;
       }
 
@@ -495,7 +531,10 @@
       ) {
         const titleLeft = title.offsetLeft || Math.round(title.getBoundingClientRect().left);
         const titleWidth = title.offsetWidth || Math.round(title.getBoundingClientRect().width);
-        const maxShiftX = Math.max(0, viewportWidth - titleLeft - titleWidth - 12);
+        const maxShiftX = Math.min(
+          Math.round(viewportWidth * 0.38),
+          Math.max(0, viewportWidth - titleLeft - titleWidth + Math.round(viewportWidth * 0.06)),
+        );
         const maxShiftY = Math.min(72, Math.round(viewportHeight * 0.12));
         window.__nnsMobileTitleMetrics = {
           maxShiftX,
@@ -506,16 +545,23 @@
       }
 
       const y = window.scrollY || document.documentElement.scrollTop || 0;
-      const progress = Math.max(0, Math.min(y / Math.max(viewportHeight || 1, 1), 1));
+      const topResetZone = Math.max(12, Math.round(viewportHeight * 0.018));
+      if (y <= topResetZone) {
+        resetMobileHeroMotion();
+        return;
+      }
+
+      const effectiveY = Math.max(0, y - topResetZone);
+      const progress = Math.max(
+        0,
+        Math.min(effectiveY / Math.max((viewportHeight || 1) - topResetZone, 1), 1),
+      );
       const shiftX = (window.__nnsMobileTitleMetrics?.maxShiftX || 0) * progress;
       const shiftY = -(window.__nnsMobileTitleMetrics?.maxShiftY || 0) * progress;
       const scale = 1 - progress * 0.045;
       const opacity = 1 - progress * 0.08;
 
-      document.documentElement.style.setProperty("--nns-mobile-title-x", shiftX + "px");
-      document.documentElement.style.setProperty("--nns-mobile-title-y", shiftY + "px");
-      document.documentElement.style.setProperty("--nns-mobile-title-scale", String(scale));
-      document.documentElement.style.setProperty("--nns-mobile-hero-opacity", String(opacity));
+      applyMobileTitleState({ shiftX, shiftY, scale, opacity });
     };
 
     const syncPalette = () => {
@@ -541,6 +587,7 @@
     window.addEventListener("resize", requestSync, { passive: true });
     window.addEventListener("orientationchange", requestSync);
     window.__nnsMobileHeroPaletteBound = true;
+    window.__nnsRequestMobileHeroSync = requestSync;
     requestSync();
   };
 
